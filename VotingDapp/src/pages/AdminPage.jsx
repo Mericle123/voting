@@ -1,11 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const AdminPage = ({ addCandidate, account }) => {
   const [newCandidate, setNewCandidate] = useState({ name: '', party: '', description: '' });
-  const adminAddress = '0xYourAdminAddressHere'; // Replace with your actual admin address
+  const [currentAccount, setCurrentAccount] = useState('');
+  const adminAddress = '0x66A53a9c4D09bCeb8AdCd062a8A3A18d2dA1c414'; // Replace with your actual admin address
+
+  useEffect(() => {
+    // Ensure we set the current account when the component mounts
+    if (window.ethereum) {
+      window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
+        if (accounts.length > 0) {
+          setCurrentAccount(accounts[0]);
+        }
+      });
+
+      // Listen for account changes
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts.length > 0) {
+          setCurrentAccount(accounts[0]);
+        } else {
+          setCurrentAccount('');
+        }
+      });
+    }
+  }, []);
 
   const handleAddCandidate = () => {
-    if (!account || account.toLowerCase() !== adminAddress.toLowerCase()) {
+    console.log('Connected account:', currentAccount);
+    console.log('Admin account:', adminAddress);
+
+    if (!currentAccount || currentAccount.toLowerCase() !== adminAddress.toLowerCase()) {
       alert('Only the admin can add candidates.');
       return;
     }
@@ -17,7 +41,7 @@ const AdminPage = ({ addCandidate, account }) => {
   return (
     <div className="container mx-auto p-6">
       <h2 className="text-3xl font-bold text-[#000080] mb-4 animate-pulse">Admin - Add Candidate</h2>
-      {account && account.toLowerCase() === adminAddress.toLowerCase() ? (
+      {currentAccount && currentAccount.toLowerCase() === adminAddress.toLowerCase() ? (
         <div className="space-y-4">
           <input
             type="text"

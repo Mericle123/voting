@@ -6,7 +6,7 @@ const HomePage = () => {
   const [web3, setWeb3] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const adminAddress = '0xYourAdminAddressHere'; // Replace with your actual admin address
+  const adminAddress = '0x66A53a9c4D09bCeb8AdCd062a8A3A18d2dA1c414'; // Replace with your actual admin address
 
   useEffect(() => {
     const initWeb3 = async () => {
