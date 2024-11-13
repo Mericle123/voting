@@ -25440,14 +25440,159 @@
   },
   "networks": {
     "5777": {
-      "events": {},
+      "events": {
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0xa620e116e8168f7281127a47ac04518b6fbd8b07cd150397e6e3e56127ce48cf": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "party",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "description",
+              "type": "string"
+            }
+          ],
+          "name": "CandidateAdded",
+          "type": "event"
+        },
+        "0xeaff4b37086828766ad3268786972c0cd24259d4c87a80f9d3963a3c3d999b0d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "admin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "FundsWithdrawn",
+          "type": "event"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0xd8d46ecf72f6103ff400e47d1b5fdfe248d4ca34a4acd39f63fbe903c8f7e7bd": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "candidateId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "voter",
+              "type": "address"
+            }
+          ],
+          "name": "VoteCasted",
+          "type": "event"
+        },
+        "0x20c53179fe7c6306d9d1c279d52bae5e736f5e1178137542d3a7a9d1752691be": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "VotingPaused",
+          "type": "event"
+        },
+        "0x8f69ef9279bfb1fe5f4f75790947a23fa88774e98242b966bcaaf7d25e8b3c16": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "VotingResumed",
+          "type": "event"
+        }
+      },
       "links": {},
-      "address": "0x613C743c5D5900467a75fe0274Bd7eea9564fc74",
-      "transactionHash": "0x714bc935e3d63ce2e6d80bae50a57f921d5853193cbe88f8d745868349d8814f"
+      "address": "0x78E69A17Fb22c87A87092AA799dec494986fA235",
+      "transactionHash": "0x53d08aa2f5d8eede722991528464e9e9ef0d74d7f69d89c7daa35d649c878eb1"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-11-07T11:13:21.668Z",
+  "updatedAt": "2024-11-13T10:04:26.023Z",
   "networkType": "ethereum",
   "devdoc": {
     "errors": {

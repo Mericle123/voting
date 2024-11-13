@@ -1,12 +1,12 @@
+// AdminPage.js
 import React, { useState, useEffect } from 'react';
 
-const AdminPage = ({ addCandidate, account }) => {
+const AdminPage = ({ web3, addCandidate, account }) => {
   const [newCandidate, setNewCandidate] = useState({ name: '', party: '', description: '' });
   const [currentAccount, setCurrentAccount] = useState('');
   const adminAddress = '0x66A53a9c4D09bCeb8AdCd062a8A3A18d2dA1c414'; // Replace with your actual admin address
 
   useEffect(() => {
-    // Ensure we set the current account when the component mounts
     if (window.ethereum) {
       window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
         if (accounts.length > 0) {
@@ -14,7 +14,6 @@ const AdminPage = ({ addCandidate, account }) => {
         }
       });
 
-      // Listen for account changes
       window.ethereum.on('accountsChanged', (accounts) => {
         if (accounts.length > 0) {
           setCurrentAccount(accounts[0]);
@@ -25,17 +24,33 @@ const AdminPage = ({ addCandidate, account }) => {
     }
   }, []);
 
-  const handleAddCandidate = () => {
-    console.log('Connected account:', currentAccount);
-    console.log('Admin account:', adminAddress);
-
+  const handleAddCandidate = async () => {
     if (!currentAccount || currentAccount.toLowerCase() !== adminAddress.toLowerCase()) {
       alert('Only the admin can add candidates.');
       return;
     }
 
-    addCandidate(newCandidate);
-    setNewCandidate({ name: '', party: '', description: '' });
+    // Deduct ETH before creating a candidate
+    try {
+      const votePrice = web3.utils.toWei('0.01', 'ether'); // Assuming 0.01 ETH as vote price
+
+      // Send ETH to the admin address
+      const transactionHash = await web3.eth.sendTransaction({
+        from: currentAccount,
+        to: adminAddress,
+        value: votePrice,
+      });
+
+      console.log('Transaction successful with hash:', transactionHash);
+
+      // Add candidate after transaction is confirmed
+      await addCandidate(newCandidate);
+      setNewCandidate({ name: '', party: '', description: '' });
+      alert('Candidate added successfully!');
+    } catch (error) {
+      console.error('Error adding candidate:', error);
+      alert('Failed to deduct ETH for candidate creation. Please check your wallet and try again.');
+    }
   };
 
   return (

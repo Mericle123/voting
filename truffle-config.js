@@ -6,7 +6,7 @@ module.exports = {
       port: 7545,            // Standard port for Ethereum (use 7545 if you're using Ganache with default settings)
       network_id: "*",       // Match any network id for local development
     },
-    // You can add other network configurations (like Rinkeby, Mainnet) here if needed.
+    // You can add other network configurations (like Rinkeby, Mainnet) here if neededHJNO.
   },
 
   // Compiler configurations

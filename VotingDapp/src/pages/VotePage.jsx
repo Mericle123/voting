@@ -1,9 +1,15 @@
-import { useState } from 'react';
+// VotePage.js
+import React, { useState } from 'react';
 
-const VotePage = ({ candidates, castVote }) => {
+const VotePage = ({ candidates, castVote, account }) => {
   const [voted, setVoted] = useState(false);
+  const adminAddress = '0x66A53a9c4D09bCeb8AdCd062a8A3A18d2dA1c414'; // Replace with actual admin address
 
   const handleVote = (candidateName) => {
+    if (account.toLowerCase() === adminAddress.toLowerCase()) {
+      alert("Admin is not allowed to vote.");
+      return;
+    }
     castVote(candidateName);
     setVoted(true);
   };
