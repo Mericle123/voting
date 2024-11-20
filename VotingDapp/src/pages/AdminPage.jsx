@@ -1,61 +1,79 @@
-// AdminPage.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import Web3 from "web3"; // Import Web3.js
+import abi from "../Voting.json"; // Ensure this points to the correct file
 
-const AdminPage = ({ web3, addCandidate, account }) => {
-  const [newCandidate, setNewCandidate] = useState({ name: '', party: '', description: '' });
-  const [currentAccount, setCurrentAccount] = useState('');
-  const adminAddress = '0x66A53a9c4D09bCeb8AdCd062a8A3A18d2dA1c414'; // Replace with your actual admin address
+const AdminPage = () => {
+  const [newCandidate, setNewCandidate] = useState({ name: "", party: "", description: "" });
+  const [currentAccount, setCurrentAccount] = useState("");
+  const [web3, setWeb3] = useState(null);
+  const [contract, setContract] = useState(null);
+
+  const adminAddress = "0x66A53a9c4D09bCeb8AdCd062a8A3A18d2dA1c414"; // Replace with actual admin address
+  const contractAddress = "0x2feFD39aEd960c90d86d452835968DC951241188"; // Replace with your contract address
 
   useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
-        if (accounts.length > 0) {
-          setCurrentAccount(accounts[0]);
-        }
-      });
+    const initializeWeb3 = async () => {
+      if (window.ethereum) {
+        try {
+          const web3Instance = new Web3(window.ethereum);
+          setWeb3(web3Instance);
 
-      window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts.length > 0) {
+          // Request account access
+          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
           setCurrentAccount(accounts[0]);
-        } else {
-          setCurrentAccount('');
+
+          // Set up contract
+          const votingContract = new web3Instance.eth.Contract(abi.abi, contractAddress);
+          setContract(votingContract);
+        } catch (error) {
+          console.error("Failed to connect wallet:", error);
+          alert("Please connect your wallet to use the admin page.");
         }
-      });
-    }
+      } else {
+        alert("MetaMask is not detected. Please install MetaMask to proceed.");
+      }
+    };
+
+    initializeWeb3();
+
+    // Handle account changes
+    window.ethereum?.on("accountsChanged", (accounts) => {
+      if (accounts.length > 0) {
+        setCurrentAccount(accounts[0]);
+      } else {
+        setCurrentAccount("");
+      }
+    });
   }, []);
 
   const handleAddCandidate = async () => {
     if (!currentAccount || currentAccount.toLowerCase() !== adminAddress.toLowerCase()) {
-      alert('Only the admin can add candidates.');
+      alert("Access denied. Only the admin can add candidates.");
       return;
     }
 
-    // Deduct ETH before creating a candidate
+    if (!contract) {
+      alert("The contract is not loaded. Please refresh the page.");
+      return;
+    }
+
     try {
-      const votePrice = web3.utils.toWei('0.01', 'ether'); // Assuming 0.01 ETH as vote price
+      // Add a candidate using the contract
+      await contract.methods
+        .addCandidate(newCandidate.name, newCandidate.party, newCandidate.description)
+        .send({ from: currentAccount, gas: 300000 });
 
-      // Send ETH to the admin address
-      const transactionHash = await web3.eth.sendTransaction({
-        from: currentAccount,
-        to: adminAddress,
-        value: votePrice,
-      });
-
-      console.log('Transaction successful with hash:', transactionHash);
-
-      // Add candidate after transaction is confirmed
-      await addCandidate(newCandidate);
-      setNewCandidate({ name: '', party: '', description: '' });
-      alert('Candidate added successfully!');
+      setNewCandidate({ name: "", party: "", description: "" });
+      alert("Candidate added successfully!");
     } catch (error) {
-      console.error('Error adding candidate:', error);
-      alert('Failed to deduct ETH for candidate creation. Please check your wallet and try again.');
+      console.error("Error adding candidate:", error);
+      alert("Failed to add the candidate. Ensure the contract is deployed and you are the admin.");
     }
   };
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-3xl font-bold text-[#000080] mb-4 animate-pulse">Admin - Add Candidate</h2>
+      <h2 className="text-3xl font-bold text-[#000080] mb-4">Admin - Add Candidate</h2>
       {currentAccount && currentAccount.toLowerCase() === adminAddress.toLowerCase() ? (
         <div className="space-y-4">
           <input
@@ -63,24 +81,24 @@ const AdminPage = ({ web3, addCandidate, account }) => {
             placeholder="Candidate Name"
             value={newCandidate.name}
             onChange={(e) => setNewCandidate({ ...newCandidate, name: e.target.value })}
-            className="w-full p-3 border border-[#000080] rounded outline-none focus:ring-2 focus:ring-[#000080] transition-transform duration-300 transform hover:scale-105"
+            className="w-full p-3 border border-[#000080] rounded outline-none focus:ring-2 focus:ring-[#000080]"
           />
           <input
             type="text"
             placeholder="Party"
             value={newCandidate.party}
             onChange={(e) => setNewCandidate({ ...newCandidate, party: e.target.value })}
-            className="w-full p-3 border border-[#000080] rounded outline-none focus:ring-2 focus:ring-[#000080] transition-transform duration-300 transform hover:scale-105"
+            className="w-full p-3 border border-[#000080] rounded outline-none focus:ring-2 focus:ring-[#000080]"
           />
           <textarea
             placeholder="Description"
             value={newCandidate.description}
             onChange={(e) => setNewCandidate({ ...newCandidate, description: e.target.value })}
-            className="w-full p-3 border border-[#000080] rounded outline-none focus:ring-2 focus:ring-[#000080] transition-transform duration-300 transform hover:scale-105"
+            className="w-full p-3 border border-[#000080] rounded outline-none focus:ring-2 focus:ring-[#000080]"
           />
           <button
             onClick={handleAddCandidate}
-            className="bg-[#000080] text-white px-4 py-2 rounded hover:bg-[#0000b3] transition-colors duration-300 transform hover:scale-105 active:scale-95"
+            className="bg-[#000080] text-white px-4 py-2 rounded hover:bg-[#0000b3]"
           >
             Add Candidate
           </button>

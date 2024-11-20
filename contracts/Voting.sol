@@ -36,29 +36,29 @@ contract Voting is ERC20, Ownable {
     // Modifier to ensure that only admin can execute the function
     modifier onlyAdmin() {
         require(msg.sender == owner(), "You are not the admin.");
-        _;
+        _; 
     }
 
     modifier onlyWhenNotPaused() {
         require(!isPaused, "Voting is paused.");
-        _;
+        _; 
     }
 
     modifier onlyDuringVotingPeriod() {
         require(block.timestamp >= startTime && block.timestamp <= endTime, "Voting period is not active.");
-        _;
+        _; 
     }
 
     modifier hasNotVoted() {
         require(!voters[msg.sender], "You have already voted.");
-        _;
+        _; 
     }
+
     uint256 public initialSupply = 10000000 * 10 ** 18;
 
     // Constructor to initialize the contract with the vote price and voting period
     constructor() ERC20("VotingToken", "VT") Ownable(msg.sender) {
-        
-        votePrice = 0.01 * 10 ** 18;
+        votePrice = 1 * 10 ** 18;
         startTime = 1730973600;
         endTime = 1731578400;
         isPaused = false;
@@ -77,22 +77,29 @@ contract Voting is ERC20, Ownable {
         candidateCount++;
     }
 
-    // Function to cast a vote for a specific candidate
-    function vote(uint256 _candidateId) public hasNotVoted onlyDuringVotingPeriod onlyWhenNotPaused {
+    // Function to update the vote count for a candidate
+    function setVote(uint256 _candidateId) internal {
+        candidates[_candidateId].voteCount += 1;
+    }
+
+    // Function to cast a vote for a specific candidate hasNotVoted onlyDuringVotingPeriod onlyWhenNotPaused 
+    function vote(uint256 _candidateId) public {
         require(_candidateId < candidateCount, "Invalid candidate ID.");
 
-        // Transfer the voting tokens to the contract for voting
-        require(
-            transfer(address(this), votePrice),
-            "Token transfer failed"
-        );
+        // Burn the voting tokens
+        _burn(msg.sender, votePrice);
 
-        // Increment the vote count for the selected candidate
-        candidates[_candidateId].voteCount++;
+        // Increment the vote count using setVote
+        setVote(_candidateId);
+
+        // Mark the voter as having voted
         voters[msg.sender] = true;
 
+        // Emit the vote casted event
         emit VoteCasted(_candidateId, msg.sender);
     }
+
+
 
     // Function to withdraw collected tokens (only accessible by the admin)
     function withdrawFunds() public onlyAdmin {
@@ -119,6 +126,11 @@ contract Voting is ERC20, Ownable {
     function getCandidate(uint256 _candidateId) public view returns (Candidate memory) {
         require(_candidateId < candidateCount, "Invalid candidate ID.");
         return candidates[_candidateId];
+    }
+
+    // Function to get the total number of candidates
+    function getCandidateCount() public view returns (uint256) {
+        return candidateCount;
     }
 
     // Function to get the total number of votes casted
